@@ -52,8 +52,8 @@ class _InterviewHomeScreenState extends State<InterviewHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final orbSize = (screenWidth - 40).clamp(300.0, 420.0);
-    final titleSize = screenWidth < 390 ? 38.0 : 44.0;
+    final orbSize = (screenWidth - 40).clamp(200.0, 300.0);
+    final titleSize = screenWidth < 390 ? 38.0 : 30.0;
 
     return Scaffold(
       body: SafeArea(
@@ -72,61 +72,90 @@ class _InterviewHomeScreenState extends State<InterviewHomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
-                    const TopBar(),
-                    const SizedBox(height: 18),
-                    InterviewOrb(size: orbSize),
-                    const SizedBox(height: 18),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Explore',
-                        style: TextStyle(
-                          fontSize: titleSize,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.6,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
+                    /// 🔥 SCROLLABLE AREA
                     Expanded(
-                      child: GridView.builder(
-                        itemCount: cards.length,
-                        padding: EdgeInsets.zero,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 14,
-                              mainAxisSpacing: 14,
-                              childAspectRatio: 0.86,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            const TopBar(),
+                            const SizedBox(height: 18),
+
+                            InterviewOrb(size: orbSize),
+
+                            const SizedBox(height: 18),
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Explore Interviews :',
+                                style: TextStyle(
+                                  fontSize: titleSize,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.6,
+                                ),
+                              ),
                             ),
-                        itemBuilder: (context, index) => TrackCard(
-                          data: cards[index],
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => InterviewSessionScreen(track: cards[index]),
-                            ));
-                          },
+
+                            const SizedBox(height: 14),
+
+                            /// 🔥 GRID (NOW PART OF MAIN SCROLL)
+                            GridView.builder(
+                              itemCount: cards.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 14,
+                                    mainAxisSpacing: 14,
+                                    childAspectRatio: 0.86,
+                                  ),
+                              itemBuilder:
+                                  (context, index) => TrackCard(
+                                    data: cards[index],
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => InterviewSessionScreen(
+                                                track: cards[index],
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                            ),
+
+                            const SizedBox(height: 20),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 6),
+
+                    /// 🔥 FIXED BOTTOM NAV (BETTER UX)
                     BottomNav(
                       currentIndex: currentIndex,
                       onChanged: (index) {
                         if (index == 1) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const InterviewSessionScreen(),
-                          ));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const InterviewSessionScreen(),
+                            ),
+                          );
                         } else if (index == 2) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const FeedbackHistoryScreen(),
-                          ));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const FeedbackHistoryScreen(),
+                            ),
+                          );
                         } else {
                           setState(() => currentIndex = index);
                         }
                       },
                     ),
+
                     const SizedBox(height: 12),
                   ],
                 ),
