@@ -7,6 +7,7 @@ import 'package:preptalk_app/widgets/top_bar.dart';
 import 'package:preptalk_app/widgets/track_card.dart';
 import 'package:preptalk_app/screens/interview_session_screen.dart';
 import 'package:preptalk_app/screens/feedback_history_screen.dart';
+import 'package:preptalk_app/services/gemini_service.dart';
 
 class InterviewHomeScreen extends StatefulWidget {
   const InterviewHomeScreen({super.key});
@@ -85,6 +86,29 @@ class _InterviewHomeScreenState extends State<InterviewHomeScreen> {
 
                             const SizedBox(height: 18),
 
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red, // 👈 force visible
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () async {
+                                final result = await GeminiService.sendPrompt(
+                                  "Ask me one simple interview question for a beginner Flutter developer",
+                                );
+
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text(result)));
+                              },
+                              child: const Text("Test AI"),
+                            ),
+
+                            const SizedBox(height: 18),
+
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -103,6 +127,7 @@ class _InterviewHomeScreenState extends State<InterviewHomeScreen> {
                             GridView.builder(
                               itemCount: cards.length,
                               shrinkWrap: true,
+
                               physics: const NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.zero,
                               gridDelegate:
@@ -112,23 +137,21 @@ class _InterviewHomeScreenState extends State<InterviewHomeScreen> {
                                     mainAxisSpacing: 14,
                                     childAspectRatio: 0.86,
                                   ),
-                              itemBuilder:
-                                  (context, index) => TrackCard(
-                                    data: cards[index],
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => InterviewSessionScreen(
-                                                track: cards[index],
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                              itemBuilder: (context, index) => TrackCard(
+                                data: cards[index],
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => InterviewSessionScreen(
+                                        track: cards[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 80),
                           ],
                         ),
                       ),
